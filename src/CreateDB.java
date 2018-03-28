@@ -3,6 +3,7 @@
 import java.sql.*;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CreateDB {
 
@@ -107,11 +108,11 @@ public class CreateDB {
         }
     }
 
-    public void getTheRest(String...args){
-        for (String h : args) {
+    public void getTheRest(List<String> h){
+        for (String ele : h) {
 
             try {
-                int tryParse = Integer.parseInt(h);
+                int tryParse = Integer.parseInt(ele);
                 System.out.println(rsSubject.get(tryParse));
                 System.out.println(rsSection.get(tryParse));
                 System.out.println(rsTime.get(tryParse));
@@ -125,9 +126,21 @@ public class CreateDB {
 
         }
 
+    public ArrayList<String> getRsSubject() {
+        return rsSubject;
+    }
 
+    public ArrayList<String> getRsTime() {
+        return rsTime;
+    }
 
+    public ArrayList<String> getRsSection() {
+        return rsSection;
+    }
 
+    public ArrayList<String> getRsTeacher() {
+        return rsTeacher;
+    }
 
     public void closeConnection() {
         try {

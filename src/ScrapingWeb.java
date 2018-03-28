@@ -7,6 +7,8 @@ import org.jsoup.select.Elements;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -19,9 +21,11 @@ public class ScrapingWeb {
     private Document doc;
     private Elements titleCourse;
     private Elements eachTable;
+    private ArrayList<String> choosen;
 
 
     public ScrapingWeb(String url) throws IOException {
+        choosen = new ArrayList<>();
 
         this.doc = Jsoup.connect(url).maxBodySize(0).get();
         print("Fetching %s...", url);
@@ -53,6 +57,8 @@ public class ScrapingWeb {
                 index++;
             }
         }
+        allDistinctSchedule();
+
     }
 
     private void pushToDB(Elements td, int index) {
@@ -70,6 +76,18 @@ public class ScrapingWeb {
 //        System.out.printf("%s %s %s %s \n", subject, section, time, instructor);
 
 
+    }
+
+    public void save(List<String>  s ){
+        for (String sub : s){
+            int int_ = Integer.parseInt(sub);
+            choosen.add(database.getRsSubject().get(int_));
+            System.out.println("Successfully added >> " +  database.getRsSubject().get(int_) ) ;
+        }
+    }
+
+    public ArrayList<String> getChoosen() {
+        return choosen;
     }
 
     private StringBuilder makeLine(){
@@ -100,8 +118,8 @@ public class ScrapingWeb {
 
         database.DBSearchBySubject(subjectToSearch);
     }
-    public void theRest(String...args){
-        database.getTheRest(args);
+    public void theRest(List<String> sub){
+        database.getTheRest(sub);
     }
 
 
