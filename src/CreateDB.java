@@ -1,17 +1,29 @@
 
 
 import java.sql.*;
+import java.text.Format;
+import java.util.ArrayList;
 
 public class CreateDB {
 
     private Statement statement;
     private int id = -1;
     public Connection connection;
-    private ResultSet rsSubject;
+
+    private ArrayList<String> rsSubject;
+    private ArrayList<String> rsTime;
+    private ArrayList<String> rsSection;
+    private ArrayList<String> rsTeacher;
+
+
 
 
     public CreateDB() {
-
+        rsSubject = new ArrayList<>();
+        rsSection = new ArrayList<>();
+        rsTime  = new ArrayList<>();
+        rsTeacher = new ArrayList<>();
+//    Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         connection = null;
         try {
             //create a database connection
@@ -66,36 +78,56 @@ public class CreateDB {
         try {
 
 
-            rsSubject = statement.executeQuery("SELECT DISTINCT subject_ FROM schedule;");
-            while (rsSubject.next()) {
-                System.out.println(rsSubject.getString("subject_"));
+            ResultSet rs = statement.executeQuery("SELECT * FROM schedule;");
+
+            while (rs.next()) {
+                rsSubject.add(rs.getString("subject_") );
+                rsSection.add(rs.getString("section_") );
+                rsTime.add(rs.getString("time_") );
+                rsTeacher.add(rs.getString("instructor_") );
+
             }
+
         } catch (SQLException sqlEx) {
             sqlEx.printStackTrace();
         }
     }
 
-    public void  isInDB(String subject){
+    public void DBSearchBySubject(String subject){
 
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT subject_ FROM schedule WHERE  subject_= ?");
 
-            preparedStatement.setString(1, "ICCM104 Intermediate English Communication I 4(4-0-8)");
+        for (int i = 0; i < rsSubject.size(); i++) {
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+            String rt = rsSubject.get(i).toLowerCase();
+            if (rt.contains(subject.toLowerCase())) {
+                System.out.println(i+". " +rsSubject.get(i));
 
-            while (resultSet.next()){
-                System.out.println(resultSet.getString("subject_"));
+
             }
+        }
+    }
+
+    public void getTheRest(String...args){
+        for (String h : args) {
+
+            try {
+                int tryParse = Integer.parseInt(h);
+                System.out.println(rsSubject.get(tryParse));
+                System.out.println(rsSection.get(tryParse));
+                System.out.println(rsTime.get(tryParse));
+                System.out.println(rsTeacher.get(tryParse));
+
+            }catch (NumberFormatException ex) {
+                ex.printStackTrace();
+                System.out.println("NOT A NUMBER");}
+                }
 
 
-        } catch (SQLException sql ) {sql.printStackTrace();
         }
 
 
 
 
-    }
 
     public void closeConnection() {
         try {

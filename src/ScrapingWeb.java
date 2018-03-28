@@ -96,8 +96,12 @@ public class ScrapingWeb {
         database.allSubjectAvailable();
     }
 
-    public  void searchSubject(){
-        database.isInDB("Hey");
+    public  void searchSubject(String subjectToSearch){
+
+        database.DBSearchBySubject(subjectToSearch);
+    }
+    public void theRest(String...args){
+        database.getTheRest(args);
     }
 
 
