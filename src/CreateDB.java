@@ -24,6 +24,7 @@ public class CreateDB {
             // Note: just for this example , we want a clear start;
             // if the table exists already we want to delete it
             statement.executeUpdate("DROP TABLE IF EXISTS schedule");
+
 //            statement.executeUpdate("DROP TABLE IF EXISTS major");
 
 

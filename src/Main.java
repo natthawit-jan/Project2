@@ -14,6 +14,9 @@ public class Main {
         // print all schedule and push all data to my DB
         begin.printAllSchedule();
 
+        // we ask user what subject do they want ?
+
+
 
 
 

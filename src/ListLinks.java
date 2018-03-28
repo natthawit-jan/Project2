@@ -62,10 +62,15 @@ public class ListLinks {
 
 
             System.out.printf(" Table %d has %d rows \n", i + 1, tr_inEachRow.size());
+            int index = 0;
             for (Element ele : tr_inEachRow) {
-                System.out.println(ele.text());
 
-                pushToDB(td_inEachRow);
+
+
+//                System.out.println(ele.text());
+
+                pushToDB(td_inEachRow, index);
+                index++;
 
 
             }
@@ -76,17 +81,19 @@ public class ListLinks {
     }
 
 
-    private void pushToDB(Elements td) throws SQLException {
+    private void pushToDB(Elements td, int index) throws SQLException {
 
 
-        String subject = td.get(1).text();
-        String section = td.get(3).text();
-        String time = td.get(5).text();
-        String instructor = td.get(7).text();
+
+        String subject = td.get(1+10*index).text();
+        String section = td.get(3+10*index).text();
+        String time = td.get(5+10*index).text();
+        String instructor = td.get(7+10*index).text();
+
 
         database.insertDatabase(subject, section, time, instructor);
 
-        System.out.printf("%s %s %s %s", subject, section, time, instructor);
+        System.out.printf("%s %s %s %s \n", subject, section, time, instructor);
 
 
     }
