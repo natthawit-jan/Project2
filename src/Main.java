@@ -9,12 +9,19 @@ public class Main {
         Class.forName("org.sqlite.JDBC");
 
 
-        ListLinks begin = new ListLinks("https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id=18");
+        ScrapingWeb webScraping = new ScrapingWeb("https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id=18");
 
         // print all schedule and push all data to my DB
-        begin.printAllSchedule();
+        webScraping.start();
 
         // we ask user what subject do they want ?
+
+
+        //try printing all distinct values
+//        webScraping.allDistinctSchedule();
+        webScraping.searchSubject();
+
+
 
 
 

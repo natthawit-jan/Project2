@@ -1,13 +1,14 @@
 
 
 import java.sql.*;
-import java.util.ArrayList;
 
 public class CreateDB {
 
     private Statement statement;
     private int id = -1;
     public Connection connection;
+    private ResultSet rsSubject;
+
 
     public CreateDB() {
 
@@ -41,13 +42,10 @@ public class CreateDB {
     }
 
 
-    public void insertDatabase(String subject, String section_, String time_, String instructor) throws SQLException {
-//        id++;
-//        System.out.println(id);
-
+    public void insertDatabase(String subject, String section_, String time_, String instructor)  {
         try {
 
-            String sql= "INSERT INTO schedule VALUES(?, ?, ?, ?)";
+            String sql = "INSERT INTO schedule VALUES(?, ?, ?, ?)";
 
             PreparedStatement ps = connection.prepareStatement(sql);
 
@@ -56,17 +54,57 @@ public class CreateDB {
             ps.setString(3, time_);
             ps.setString(4, instructor);
 
-            int val = ps.executeUpdate();
-
-
-
+            ps.executeUpdate();
 
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
+    public void allSubjectAvailable() {
+        try {
+
+
+            rsSubject = statement.executeQuery("SELECT DISTINCT subject_ FROM schedule;");
+            while (rsSubject.next()) {
+                System.out.println(rsSubject.getString("subject_"));
+            }
+        } catch (SQLException sqlEx) {
+            sqlEx.printStackTrace();
+        }
+    }
+
+    public void  isInDB(String subject){
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT subject_ FROM schedule WHERE  subject_= ?");
+
+            preparedStatement.setString(1, "ICCM104 Intermediate English Communication I 4(4-0-8)");
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                System.out.println(resultSet.getString("subject_"));
+            }
+
+
+        } catch (SQLException sql ) {sql.printStackTrace();
+        }
+
+
+
+
+    }
+
+    public void closeConnection() {
+        try {
+            if (connection != null) connection.close();
+        } catch (SQLException sql) {
+            sql.printStackTrace();
+        }
+    }
 }
 
 
-//
+

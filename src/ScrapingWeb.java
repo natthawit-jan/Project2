@@ -7,14 +7,12 @@ import org.jsoup.select.Elements;
 
 
 import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Collections;
 
 
 /**
  * Example program to list links from a URL.
  */
-public class ListLinks {
+public class ScrapingWeb {
 
 
     private CreateDB database = new CreateDB();
@@ -23,7 +21,7 @@ public class ListLinks {
     private Elements eachTable;
 
 
-    public ListLinks(String url) throws IOException {
+    public ScrapingWeb(String url) throws IOException {
 
         this.doc = Jsoup.connect(url).maxBodySize(0).get();
         print("Fetching %s...", url);
@@ -38,50 +36,26 @@ public class ListLinks {
         // For each table we get its row
     }
 
-
-    public void printAllSchedule() throws IOException, SQLException, InterruptedException {
-
-
+    public void start() {
         String title = doc.title();
         print("The title is %s", title);
 
-
-        StringBuilder line = new StringBuilder();
-        for (int i = 0; i < 500; i++) {
-            line.append("_");
-
-        }
-
-
         for (int i = 0; i < eachTable.size(); i++) {
-            System.out.println(titleCourse.get(i).text());
-
+//            System.out.println(titleCourse.get(i).text());
             Elements tr_inEachRow = eachTable.get(i).select("tbody").select("tr");
-
             Elements td_inEachRow = tr_inEachRow.select("td");
-
-
-            System.out.printf(" Table %d has %d rows \n", i + 1, tr_inEachRow.size());
+//            System.out.printf(" Table %d has %d rows \n", i + 1, tr_inEachRow.size());
             int index = 0;
             for (Element ele : tr_inEachRow) {
-
-
-
-//                System.out.println(ele.text());
+                //                System.out.println(ele.text());
 
                 pushToDB(td_inEachRow, index);
                 index++;
-
-
             }
-            System.out.println();
-            System.out.println(line.toString());
         }
-        if (database.connection != null) database.connection.close();
     }
 
-
-    private void pushToDB(Elements td, int index) throws SQLException {
+    private void pushToDB(Elements td, int index) {
 
 
 
@@ -93,8 +67,18 @@ public class ListLinks {
 
         database.insertDatabase(subject, section, time, instructor);
 
-        System.out.printf("%s %s %s %s \n", subject, section, time, instructor);
+//        System.out.printf("%s %s %s %s \n", subject, section, time, instructor);
 
+
+    }
+
+    private StringBuilder makeLine(){
+        StringBuilder line = new StringBuilder();
+        for (int i = 0; i < 500; i++) {
+            line.append("_");
+        }
+
+        return line;
 
     }
 
@@ -107,6 +91,16 @@ public class ListLinks {
         }
         return sb;
     }
+
+    public void allDistinctSchedule(){
+        database.allSubjectAvailable();
+    }
+
+    public  void searchSubject(){
+        database.isInDB("Hey");
+    }
+
+
 
 
     private static void print(String msg, Object... args) {
