@@ -4,8 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,9 +48,9 @@ public class ScrapingWeb {
             Elements td_inEachRow = tr_inEachRow.select("td");
 //            System.out.printf(" Table %d has %d rows \n", i + 1, tr_inEachRow.size());
             int index = 0;
-            for (Element ele : tr_inEachRow) {
-                //                System.out.println(ele.text());
 
+            // push everything into the database.
+            for (Element ele : tr_inEachRow) {
                 pushToDB(td_inEachRow, index);
                 index++;
             }

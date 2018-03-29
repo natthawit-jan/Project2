@@ -20,6 +20,11 @@ public class Main {
         webScraping.start();
         System.out.println("Database Successfully Retrived");
 
+        System.out.println();
+        System.out.println();
+
+
+
 
     }
 
@@ -110,6 +115,7 @@ public class Main {
 //        System.out.println(" Type in the number of subject that appears in front of the subject name to get more infomation \n (Eg. 4 5 56");
 
 //
+
 //
         System.out.println("____________________HERE ARE THE LIST OF TIME AND TEACHERS ____________________________________");
 //
