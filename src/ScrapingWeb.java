@@ -15,7 +15,7 @@ import java.util.List;
 public class ScrapingWeb {
 
 
-    private CreateDB database = new CreateDB();
+    private DB database = new DB();
     private Document doc;
     private Elements titleCourse;
     private Elements eachTable;
@@ -55,19 +55,15 @@ public class ScrapingWeb {
                 index++;
             }
         }
-        allDistinctSchedule();
+
 
     }
 
     private void pushToDB(Elements td, int index) {
-
-
-
         String subject = td.get(1+10*index).text();
         String section = td.get(3+10*index).text();
         String time = td.get(5+10*index).text();
         String instructor = td.get(7+10*index).text();
-
 
         database.insertDatabase(subject, section, time, instructor);
 
@@ -79,9 +75,19 @@ public class ScrapingWeb {
     public void save(List<String>  s ){
         for (String sub : s){
             int int_ = Integer.parseInt(sub);
-            choosen.add(database.getRsSubject().get(int_));
-            System.out.println("Successfully added >> " +  database.getRsSubject().get(int_) ) ;
+            if (isClash(int_)){
+                System.out.println("We can't allow to add becase this course clashes with + ");
+            }else {
+                choosen.add(database.getRsSubject().get(int_));
+                System.out.println("Successfully added >> " + database.getRsSubject().get(int_) + "\n");
+            }
         }
+    }
+
+    private boolean isClash(int i){
+        // check the clash TODO
+        return true;
+
     }
 
     public ArrayList<String> getChoosen() {
@@ -108,9 +114,6 @@ public class ScrapingWeb {
         return sb;
     }
 
-    public void allDistinctSchedule(){
-        database.allSubjectAvailable();
-    }
 
     public  void searchSubject(String subjectToSearch){
 
@@ -118,6 +121,10 @@ public class ScrapingWeb {
     }
     public void theRest(List<String> sub){
         database.getTheRest(sub);
+    }
+
+    public void close(){
+        database.closeConnection();
     }
 
 

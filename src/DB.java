@@ -5,7 +5,7 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateDB {
+public class DB {
 
     private Statement statement;
     private int id = -1;
@@ -19,13 +19,14 @@ public class CreateDB {
 
 
 
-    public CreateDB() {
+    public DB() {
         rsSubject = new ArrayList<>();
         rsSection = new ArrayList<>();
         rsTime  = new ArrayList<>();
         rsTeacher = new ArrayList<>();
-//    Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         connection = null;
+
+
         try {
             //create a database connection
             connection = DriverManager.getConnection("jdbc:sqlite:muicspace.db");
@@ -58,6 +59,13 @@ public class CreateDB {
     public void insertDatabase(String subject, String section_, String time_, String instructor)  {
         try {
 
+            rsSubject.add(subject );
+            rsSection.add(section_);
+            rsTime.add(time_ );
+            rsTeacher.add(instructor );
+
+
+
             String sql = "INSERT INTO schedule VALUES(?, ?, ?, ?)";
 
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -75,24 +83,7 @@ public class CreateDB {
         }
     }
 
-    public void allSubjectAvailable() {
-        try {
 
-
-            ResultSet rs = statement.executeQuery("SELECT * FROM schedule;");
-
-            while (rs.next()) {
-                rsSubject.add(rs.getString("subject_") );
-                rsSection.add(rs.getString("section_") );
-                rsTime.add(rs.getString("time_") );
-                rsTeacher.add(rs.getString("instructor_") );
-
-            }
-
-        } catch (SQLException sqlEx) {
-            sqlEx.printStackTrace();
-        }
-    }
 
     public void DBSearchBySubject(String subject){
 
@@ -142,7 +133,7 @@ public class CreateDB {
         return rsTeacher;
     }
 
-    public void closeConnection() {
+    public  void closeConnection() {
         try {
             if (connection != null) connection.close();
         } catch (SQLException sql) {
