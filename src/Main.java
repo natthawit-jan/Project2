@@ -33,45 +33,63 @@ public class Main {
 
         Class.forName("org.sqlite.JDBC");
 
-        // INITIALISE the Main class with Url that I want to scrape. In this case  is muic open section next time
+        // INITIALISE the Main class with URL that I want to scrape. In this case  is muic open section next term
 
         Main io = new Main("https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id=18");
-        io.webScraping.getFirstFromDB();
 
+
+        // this is just to check the activty of uses that would break the program and exist ( e. user type x to exit the program.
         boolean breakSurvey = false;
+
+        // local variable for scanner
         Scanner scmain = new Scanner(System.in);
 
-        while (breakSurvey == false) {
-            String i = io.beginQuestion();
-            if (i.equals("x")) break;
-            else if (i.equals(" ")) {
+
+
+        while (breakSurvey == false) { // LOOP UNTIL THE USER TYPE X TO EXIT
+            String i = io.beginQuestion();  // begin with a question
+
+
+            if (i.equals("x")) break; // if the user wants to exit right away they can do so by typing x
+            else if (i.equals(" ")) { // if user press enter (without typing anything. the program brings them to see more options.
+
+               // options offered
                 System.out.println("Do you want to do something with this ? \n\n" +
                         "available commands are\n" +
                         "See  ( to see the course details  e.g See 343 432 343 \n" +
                         "Add ( to add course(s) you're interested in e.g  Add 343 234 123 \n" +
                         "View (to view your choosen courses) " +
-                        "No   ( to exit the program) \n" +
-                        "Press enter  ( go back to search section ) \n");
+                        "X   ( to exit the program) \n" +
+                        "Press Enter  ( go back to search section ) \n");
+
+                // since the input we receive has a command in front. I want to get that command in  order to process next
                 String[] ans = scmain.nextLine().split(" ");
-                ArrayList<String> ansArray = new ArrayList<>(Arrays.asList(ans));
+
+
+                // this list is just to keep whatever variable "ans" is
                 // get the command
-                String command = ansArray.get(0).toLowerCase();
-                ansArray.remove(0);
+                String command = io.processCommand(ans);
 
 
-                if (command.equals("no".toLowerCase())) {
+                // After I get a command, I don't need the first index anymore. I care only whatever after the command.
+                List<String> afterCommand = io.getAfterCommand(ans);
+
+
+                if (command.equals("x".toLowerCase())) {
                     System.out.println("Thank you");
                     breakSurvey = true;
                 } else if (command.equals("see".toLowerCase())) {
-                    io.sectionData(ansArray);
+                    io.sectionData(afterCommand);
 
                 } else if (command.equals("add".toLowerCase())) {
+                    io.webScraping.save(afterCommand);
+                    System.out.println(" Do you want to delete any of these courses  ? \n");
+                    String[] answer = scmain.nextLine().split(" ");
+                    String yORn = io.processCommand(answer);
 
 
-                    // before adding succeeds, it must check for time clashes????
 
 
-                    io.webScraping.save(ansArray);
                 } else if (command.equals("view".toLowerCase())) {
                     int index = 1;
                     for (String g : io.webScraping.getChosen().values()) {
@@ -86,6 +104,33 @@ public class Main {
         System.out.println("Connection is closed. Thank you for using our service");
 
 
+
+
+    }
+
+    private String processCommand(String[] s){
+        if (s.length ==1){
+            return s[0];
+        }
+        else{
+            ArrayList<String> ansArray = new ArrayList<>(Arrays.asList(s));
+
+            // this list is just to keep whatever variable "ans" is
+            // get the command
+            return ansArray.get(0).toLowerCase();
+
+
+        }
+
+    }
+    private List<String> getAfterCommand(String[] s ){
+        List<String> rt = new ArrayList<>();
+        for (int i = 1; i < s.length; i++) {
+            rt.add(s[i]);
+
+
+        }
+        return rt;
 
 
     }

@@ -80,18 +80,37 @@ public class ScrapingWeb {
     }
 
     public void save(List<String>  s ){
+        if (exceedsLimit()){
+            System.out.println(" You are not longer allowed to add any course into the list \n");
+
+        }
+        else{
+
+
         for (String sub : s){
             int int_ = Integer.parseInt(sub);
             int isClashBecase = clashWithType(int_);
             if (isClashBecase != 0){
                 System.out.println("We can't allow adding because " + reason(isClashBecase));
             }else {
-                chosen.put(int_,database.getRsSubject().get(int_));
+                chosen.put(int_, database.getRsSubject().get(int_));
                 keepTime.add(database.getRsTime().get(int_));
 
                 System.out.println("Successfully added >> " + database.getRsSubject().get(int_) + "\n");
+
+
+                // Warning the user that there are more than 5 courses in thier bracket
+
+            }
             }
         }
+    }
+
+    private boolean exceedsLimit(){
+        if (chosen.size() == 5){
+            return true;
+        }
+        return false;
     }
 
     private int clashWithType(int i){
@@ -114,13 +133,6 @@ public class ScrapingWeb {
 
     }
 
-    private String[] split(String s ){
-        return s.split(" ");
-    }
-
-    public void getFirstFromDB(){
-        database.firstDB();
-    }
 
     public Map<Integer, String> getChosen() {
         return chosen;
@@ -138,10 +150,10 @@ public class ScrapingWeb {
 
     public String reason(int type){
         if (type == 1){
-            return " You already add this into your list.\n";
+            return "you already add this into your list.\n";
         }
         else if (type == 2){
-            return "there is a time conflict in your list.";
+            return "there is a time conflict in your list.\n";
         }
         return "Nothing";
     }
