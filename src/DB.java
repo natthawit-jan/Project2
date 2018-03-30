@@ -111,10 +111,12 @@ public class DB {
 
             try {
                 int tryParse = Integer.parseInt(ele);
-                System.out.println(rsSubject.get(tryParse));
-                System.out.println(rsSection.get(tryParse));
-                System.out.println(rsTime.get(tryParse));
-                System.out.println(rsTeacher.get(tryParse));
+                System.out.println("SUBJECT     : " + rsSubject.get(tryParse));
+                System.out.println("SECTION      : " + rsSection.get(tryParse));
+                System.out.println("TIME             : " + rsTime.get(tryParse));
+                System.out.println("PROFESSOR  : " +rsTeacher.get(tryParse));
+                System.out.println(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+                System.out.println();
 
             }catch (NumberFormatException ex) {
                 ex.printStackTrace();

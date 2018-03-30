@@ -5,10 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -23,7 +20,7 @@ public class ScrapingWeb {
     private Document doc;
     private Elements titleCourse;
     private Elements eachTable;
-    private HashMap<Integer, String> chosen;
+    private HashMap<Integer, List<String>> chosen;
     private ArrayList<String> keepTime;
 
 
@@ -90,6 +87,7 @@ public class ScrapingWeb {
             }
             else {
                 chosen.remove(Integer.parseInt(ele));
+                System.out.println("- Successfully deleted -");
             }
         }
 
@@ -110,7 +108,10 @@ public class ScrapingWeb {
             if (isClashBecase != 0){
                 System.out.println("We can't allow adding because " + reason(isClashBecase));
             }else {
-                chosen.put(chosen.size()+1, database.getRsSubject().get(int_));
+
+                List<String> toPush = new ArrayList<>();
+                chosen.put(chosen.size()+1 , new ArrayList<String>(Arrays.asList(database.getRsSubject().get(int_),database.getRsSection().get(int_),
+                        database.getRsTime().get(int_), database.getRsTeacher().get(int_))));
                 keepTime.add(database.getRsTime().get(int_));
 
                 System.out.println("Successfully added >> " + database.getRsSubject().get(int_) + "\n");
@@ -151,7 +152,7 @@ public class ScrapingWeb {
     }
 
 
-    public Map<Integer, String> getChosen() {
+    public Map<Integer, List<String>> getChosen() {
         return chosen;
     }
 

@@ -1,9 +1,7 @@
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -18,13 +16,9 @@ public class Main {
 
         webScraping.start();
         System.out.println("Database Successfully Retrived\n\n");
+        System.out.println("________________________________________________________________________________________");
 
-
-
-
-
-
-    }
+        }
 
     public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException, InterruptedException {
 
@@ -70,7 +64,7 @@ public class Main {
                     System.out.println("Thank you");
                     break;
                 } else if (command.equals("see".toLowerCase())) {
-                    io.sectionData(afterCommand);
+                    io.seeData(afterCommand);
 
                 } else if (command.equals("add".toLowerCase())) {
                     io.addToTable(afterCommand);
@@ -88,16 +82,17 @@ public class Main {
                         afterCommand = io.getAfterCommand(ans,1);
                         io.deleteFromTable(afterCommand);
 
+                        }
 
-
-
-
-                    }
-
-                } //end view
+                }
+                else if (command.equals("txt".toLowerCase())){
+                    io.txtGenetrate();//end view
+                }
             } // end big else
         }
-        io.webScraping.close();
+
+        io.txtGenetrate();
+        io.close();
         System.out.println("Connection is closed. Thank you for using our service");
 
 
@@ -105,8 +100,38 @@ public class Main {
 
     }
 
+    private void close(){
+        webScraping.close();
+    }
+
     private void deleteFromTable(List<String> s){
         webScraping.deleteSelected(s);
+
+    }
+    private void txtGenetrate(){
+        try {
+            FileWriter writer = new FileWriter("YourPlan.txt");
+            writer.write("Here are the list of your chosen courses. \n\n");
+            int no = 1;
+            for (List<String> data : webScraping.getChosen().values()){
+
+                String[] array = asStrings(data.toArray());
+                String join = String.join(" ",array);
+                writer.write(no+" . "+join+"\n\n");
+                no++;
+
+            }
+            writer.write("\n\n Good luck ! :)");
+            writer.close();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+    public String[] asStrings(Object... objArray) {
+        String[] strArray = new String[objArray.length];
+        for (int i = 0; i < objArray.length; i++)
+            strArray[i] = String.valueOf(objArray[i]);
+        return strArray;
     }
 
 
@@ -118,8 +143,8 @@ public class Main {
 
     private void printViewTable() {
         int index = 1;
-        for (String g : webScraping.getChosen().values()) {
-            System.out.println(index + "." + g);
+        for (List<String> g : webScraping.getChosen().values()) {
+            System.out.println(index + "." + g.get(0));
             index++;
 
         }
@@ -141,11 +166,11 @@ public class Main {
 
     }
     private List<String> getAfterCommand(String[] s, int type ){
-        //get from the second index.
         List<String> rt = new ArrayList<>();
         for (int i = 0; i < s.length; i++) {
             rt.add(s[i]);
         }
+        //get only from the second index.
         if (type == 0){
         return rt.subList(1,rt.size());
         }
@@ -161,12 +186,13 @@ public class Main {
 
     public void printOptions(){
         System.out.println("Do you want to do something with this ? \n\n" +
-                "available commands are\n" +
-                "See  ( to see the course details  e.g See 343 432 343 \n" +
-                "Add ( to add course(s) you're interested in e.g  Add 343 234 123 \n" +
-                "View (to view your choosen courses) " +
-                "X   ( to exit the program) \n" +
-                "Press Enter  ( go back to search section ) \n");
+                "                Available commands are..\n" +
+                "• See    ( to see the course details ) e.g See 343 432 343 \n" +
+                "• Add   ( to add course(s) you're interested in ) e.g  Add 343 234 123 \n" +
+                "• View  ( to view your choosen courses) \n" +
+                "• Txt    ( to save your chosen courses as txt file you will also get this file when you exit the program) \n" +
+                "•  X      ( to exit the program) \n" +
+                "• Press Enter  ( go back to search section ) \n");
 
     }
     public String beginQuestion(){
@@ -198,7 +224,7 @@ public class Main {
 
     }
 
-    public void sectionData(List<String> from) {
+    public void seeData(List<String> from) {
 
         System.out.println("____________________HERE ARE THE LIST OF TIME AND TEACHERS ____________________________________");
 
