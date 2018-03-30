@@ -79,6 +79,22 @@ public class ScrapingWeb {
 
     }
 
+    public void deleteSelected(List<String> toDelete){
+
+
+        for (String ele : toDelete){
+            if (chosen.size() < Integer.parseInt(ele)){
+
+                System.out.println("You only have  " + toDelete.size() + " subjects\n");
+
+            }
+            else {
+                chosen.remove(Integer.parseInt(ele));
+            }
+        }
+
+    }
+
     public void save(List<String>  s ){
         if (exceedsLimit()){
             System.out.println(" You are not longer allowed to add any course into the list \n");
@@ -88,12 +104,13 @@ public class ScrapingWeb {
 
 
         for (String sub : s){
+
             int int_ = Integer.parseInt(sub);
             int isClashBecase = clashWithType(int_);
             if (isClashBecase != 0){
                 System.out.println("We can't allow adding because " + reason(isClashBecase));
             }else {
-                chosen.put(int_, database.getRsSubject().get(int_));
+                chosen.put(chosen.size()+1, database.getRsSubject().get(int_));
                 keepTime.add(database.getRsTime().get(int_));
 
                 System.out.println("Successfully added >> " + database.getRsSubject().get(int_) + "\n");

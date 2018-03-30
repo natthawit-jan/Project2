@@ -38,15 +38,12 @@ public class Main {
         Main io = new Main("https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id=18");
 
 
-        // this is just to check the activty of uses that would break the program and exist ( e. user type x to exit the program.
-        boolean breakSurvey = false;
-
         // local variable for scanner
         Scanner scmain = new Scanner(System.in);
 
 
 
-        while (breakSurvey == false) { // LOOP UNTIL THE USER TYPE X TO EXIT
+        while (true) { // LOOP UNTIL THE USER TYPE X TO EXIT
             String i = io.beginQuestion();  // begin with a question
 
 
@@ -54,13 +51,7 @@ public class Main {
             else if (i.equals(" ")) { // if user press enter (without typing anything. the program brings them to see more options.
 
                // options offered
-                System.out.println("Do you want to do something with this ? \n\n" +
-                        "available commands are\n" +
-                        "See  ( to see the course details  e.g See 343 432 343 \n" +
-                        "Add ( to add course(s) you're interested in e.g  Add 343 234 123 \n" +
-                        "View (to view your choosen courses) " +
-                        "X   ( to exit the program) \n" +
-                        "Press Enter  ( go back to search section ) \n");
+                io.printOptions();
 
                 // since the input we receive has a command in front. I want to get that command in  order to process next
                 String[] ans = scmain.nextLine().split(" ");
@@ -72,33 +63,39 @@ public class Main {
 
 
                 // After I get a command, I don't need the first index anymore. I care only whatever after the command.
-                List<String> afterCommand = io.getAfterCommand(ans);
+                List<String> afterCommand = io.getAfterCommand(ans,0);
 
 
                 if (command.equals("x".toLowerCase())) {
                     System.out.println("Thank you");
-                    breakSurvey = true;
+                    break;
                 } else if (command.equals("see".toLowerCase())) {
                     io.sectionData(afterCommand);
 
                 } else if (command.equals("add".toLowerCase())) {
-                    io.webScraping.save(afterCommand);
-                    System.out.println(" Do you want to delete any of these courses  ? \n");
-                    String[] answer = scmain.nextLine().split(" ");
-                    String yORn = io.processCommand(answer);
-
-
-
+                    io.addToTable(afterCommand);
 
                 } else if (command.equals("view".toLowerCase())) {
-                    int index = 1;
-                    for (String g : io.webScraping.getChosen().values()) {
-                        System.out.println(index + "." + g);
-                        index++;
+
+                    io.printViewTable();
+                    System.out.println(" Do you want to delete any of these courses  ? \n");
+
+                    ans = scmain.nextLine().split(" ");
+                    command = io.processCommand(ans);
+                    if (command.equals("YES".toLowerCase())){
+                        System.out.println("Which one ? \n " );
+                        ans = scmain.next().split(" ");
+                        afterCommand = io.getAfterCommand(ans,1);
+                        io.deleteFromTable(afterCommand);
+
+
+
+
+
                     }
 
-                }
-            }
+                } //end view
+            } // end big else
         }
         io.webScraping.close();
         System.out.println("Connection is closed. Thank you for using our service");
@@ -106,6 +103,26 @@ public class Main {
 
 
 
+    }
+
+    private void deleteFromTable(List<String> s){
+        webScraping.deleteSelected(s);
+    }
+
+
+
+    private void addToTable(List<String> addWhat){
+        webScraping.save(addWhat);
+
+    }
+
+    private void printViewTable() {
+        int index = 1;
+        for (String g : webScraping.getChosen().values()) {
+            System.out.println(index + "." + g);
+            index++;
+
+        }
     }
 
     private String processCommand(String[] s){
@@ -123,15 +140,33 @@ public class Main {
         }
 
     }
-    private List<String> getAfterCommand(String[] s ){
+    private List<String> getAfterCommand(String[] s, int type ){
+        //get from the second index.
         List<String> rt = new ArrayList<>();
-        for (int i = 1; i < s.length; i++) {
+        for (int i = 0; i < s.length; i++) {
             rt.add(s[i]);
-
+        }
+        if (type == 0){
+        return rt.subList(1,rt.size());
+        }
+        // get all
+        else if (type==1){
+            return rt;
 
         }
-        return rt;
+        return null;
 
+
+    }
+
+    public void printOptions(){
+        System.out.println("Do you want to do something with this ? \n\n" +
+                "available commands are\n" +
+                "See  ( to see the course details  e.g See 343 432 343 \n" +
+                "Add ( to add course(s) you're interested in e.g  Add 343 234 123 \n" +
+                "View (to view your choosen courses) " +
+                "X   ( to exit the program) \n" +
+                "Press Enter  ( go back to search section ) \n");
 
     }
     public String beginQuestion(){
@@ -140,6 +175,7 @@ public class Main {
                 "Press enter to see more options \n" +
                 "Type 'X' to exit. \n\n" );
         String searchTypeIn = sc.nextLine();
+
         if (searchTypeIn.toLowerCase().equals("X".toLowerCase())){
             return "x";
         }
@@ -147,11 +183,18 @@ public class Main {
             return " ";
         }
 
-        System.out.println("____________________________________SEARCH RESULT OF  \"" + searchTypeIn + "\"  ___________________________________________-");
-        webScraping.searchSubject(searchTypeIn);
-        System.out.printf("\n\n--------------------------------------------------------------------------------------------------------\n");
+        printSeachResult(searchTypeIn);
+
 
         return "ok";
+
+    }
+
+    private void printSeachResult(String wordToSearch){
+        System.out.println("____________________________________SEARCH RESULT OF  \"" + wordToSearch + "\"  ___________________________________________-");
+        webScraping.searchSubject(wordToSearch);
+        System.out.printf("\n\n--------------------------------------------------------------------------------------------------------\n");
+
 
     }
 
