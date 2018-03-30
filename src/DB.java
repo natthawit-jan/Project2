@@ -99,6 +99,13 @@ public class DB {
         }
     }
 
+    public void firstDB(){
+        System.out.println(rsSubject.get(0));
+        System.out.println(rsSection.get(0));
+        System.out.println(rsTime.get(0));
+        System.out.println(rsTeacher.get(0));
+    }
+
     public void getTheRest(List<String> h){
         for (String ele : h) {
 

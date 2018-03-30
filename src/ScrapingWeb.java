@@ -6,7 +6,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -15,15 +17,20 @@ import java.util.List;
 public class ScrapingWeb {
 
 
+
+
     private DB database = new DB();
     private Document doc;
     private Elements titleCourse;
     private Elements eachTable;
-    private ArrayList<String> choosen;
+    private HashMap<Integer, String> chosen;
+    private ArrayList<String> keepTime;
 
 
     public ScrapingWeb(String url) throws IOException {
-        choosen = new ArrayList<>();
+        chosen = new HashMap<>();
+        keepTime = new ArrayList<>();
+
 
         this.doc = Jsoup.connect(url).maxBodySize(0).get();
         print("Fetching %s...", url);
@@ -75,23 +82,48 @@ public class ScrapingWeb {
     public void save(List<String>  s ){
         for (String sub : s){
             int int_ = Integer.parseInt(sub);
-            if (isClash(int_)){
-                System.out.println("We can't allow to add becase this course clashes with + ");
+            int isClashBecase = clashWithType(int_);
+            if (isClashBecase != 0){
+                System.out.println("We can't allow adding because " + reason(isClashBecase));
             }else {
-                choosen.add(database.getRsSubject().get(int_));
+                chosen.put(int_,database.getRsSubject().get(int_));
+                keepTime.add(database.getRsTime().get(int_));
+
                 System.out.println("Successfully added >> " + database.getRsSubject().get(int_) + "\n");
             }
         }
     }
 
-    private boolean isClash(int i){
-        // check the clash TODO
-        return true;
+    private int clashWithType(int i){
+        if (chosen.containsKey(i)){
+            return 1;
+        }
+        // check time comflict.
+        // for each time in the data
+        for ( String eachtime : keepTime){
+            if (eachtime.equals(database.getRsTime().get(i))){
+                return 2;
+            }
+
+
+
+        }
+
+
+        return 0;
 
     }
 
-    public ArrayList<String> getChoosen() {
-        return choosen;
+    private String[] split(String s ){
+        return s.split(" ");
+    }
+
+    public void getFirstFromDB(){
+        database.firstDB();
+    }
+
+    public Map<Integer, String> getChosen() {
+        return chosen;
     }
 
     private StringBuilder makeLine(){
@@ -102,6 +134,16 @@ public class ScrapingWeb {
 
         return line;
 
+    }
+
+    public String reason(int type){
+        if (type == 1){
+            return " You already add this into your list.\n";
+        }
+        else if (type == 2){
+            return "there is a time conflict in your list.";
+        }
+        return "Nothing";
     }
 
     private static StringBuilder createhead(Elements s) {

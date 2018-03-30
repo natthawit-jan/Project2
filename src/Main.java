@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,12 +28,15 @@ public class Main {
 
     public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException, InterruptedException {
 
+
+
+
         Class.forName("org.sqlite.JDBC");
 
         // INITIALISE the Main class with Url that I want to scrape. In this case  is muic open section next time
 
         Main io = new Main("https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id=18");
-
+        io.webScraping.getFirstFromDB();
 
         boolean breakSurvey = false;
         Scanner scmain = new Scanner(System.in);
@@ -72,7 +74,7 @@ public class Main {
                     io.webScraping.save(ansArray);
                 } else if (command.equals("view".toLowerCase())) {
                     int index = 1;
-                    for (String g : io.webScraping.getChoosen()) {
+                    for (String g : io.webScraping.getChosen().values()) {
                         System.out.println(index + "." + g);
                         index++;
                     }
