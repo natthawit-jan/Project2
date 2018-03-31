@@ -11,17 +11,17 @@ public class Main {
     public Main(String url) throws IOException {
         webScraping = new ScrapingWeb(url);
         sc = new Scanner(System.in);
-        System.out.println("Retriving DATABASE .......");
+        System.out.println("Retriving DATABASE .......\n");
 
 
         webScraping.start();
+
         System.out.println("Database Successfully Retrived\n\n");
-        System.out.println("________________________________________________________________________________________");
+        System.out.println(makeLine(30).toString());
 
         }
 
     public static void main(String[] args) throws ClassNotFoundException, IOException, SQLException, InterruptedException {
-
 
 
 
@@ -32,73 +32,83 @@ public class Main {
         Main io = new Main("https://sky.muic.mahidol.ac.th/public/open_sections_by_course_tags?term_id=18");
 
 
-        // local variable for scanner
-        Scanner scmain = new Scanner(System.in);
-
-
-
         while (true) { // LOOP UNTIL THE USER TYPE X TO EXIT
-            String i = io.beginQuestion();  // begin with a question
+            io.beginQuestion();  // begin with a question
+
+            //there must be the way to fix this.
+
+            String[] ans = io.askAndReturnStringArray();
+            String command = io.processCommand(ans);
 
 
-            if (i.equals("x")) break; // if the user wants to exit right away they can do so by typing x
-            else if (i.equals(" ")) { // if user press enter (without typing anything. the program brings them to see more options.
+            // If the user type in X we print a good bye phrease and exit the program.
+            if (command.equals("x")) {
+                io.sayGoodbye();
 
-               // options offered
-                io.printOptions();
+                return;
+            }
 
-                // since the input we receive has a command in front. I want to get that command in  order to process next
-                String[] ans = scmain.nextLine().split(" ");
+            // if user press enter (without typing anything. the program brings them to see more options.
+            else if (command.equals(" ")) {
 
+                boolean isBreakOutFromOptions = false;
+                while (!isBreakOutFromOptions) {
+                    io.printOption();
 
-                // this list is just to keep whatever variable "ans" is
-                // get the command
-                String command = io.processCommand(ans);
+                    ans = io.askAndReturnStringArray();
 
-
-                // After I get a command, I don't need the first index anymore. I care only whatever after the command.
-                List<String> afterCommand = io.getAfterCommand(ans,0);
-
-
-                if (command.equals("x".toLowerCase())) {
-                    System.out.println("Thank you");
-                    break;
-                } else if (command.equals("see".toLowerCase())) {
-                    io.seeData(afterCommand);
-
-                } else if (command.equals("add".toLowerCase())) {
-                    io.addToTable(afterCommand);
-
-                } else if (command.equals("view".toLowerCase())) {
-
-                    io.printViewTable();
-                    System.out.println(" Do you want to delete any of these courses  ? \n");
-
-                    ans = scmain.nextLine().split(" ");
+                    // get the command
                     command = io.processCommand(ans);
-                    if (command.equals("YES".toLowerCase())){
-                        System.out.println("Which one ? \n " );
-                        ans = scmain.next().split(" ");
-                        afterCommand = io.getAfterCommand(ans,1);
-                        io.deleteFromTable(afterCommand);
+
+                    // After I get a command, I don't need the first index anymore. I care only whatever after the command
+                    // parameter type 0 : is for saying that we call only after the command
+                    List<String> afterCommand = io.getAfterCommand(ans, 0);
+
+
+                    if (command.equals("x".toLowerCase())) {
+
+                        io.sayGoodbye();
+
+                        return;
+
+                    } else if (command.isEmpty()) {
+                        isBreakOutFromOptions=true;
+                    } else if (command.equals("see".toLowerCase())) {
+                        io.seeData(afterCommand);
+
+                    } else if (command.equals("add".toLowerCase())) {
+                        io.addToTable(afterCommand);
+
+                    } else if (command.equals("view".toLowerCase())) {
+
+                        io.printViewTable();
+                        System.out.println("Do you want to delete any of these courses  ? \n");
+
+                        ans = io.askAndReturnStringArray();
+                        command = io.processCommand(ans);
+                        if (command.equals("YES".toLowerCase())) {
+                            System.out.println("Which one ? \n ");
+                            ans = io.askAndReturnStringArray();
+                            afterCommand = io.getAfterCommand(ans, 1);
+                            io.deleteFromTable(afterCommand);
 
                         }
 
+                    } else if (command.equals("txt".toLowerCase())) {
+                        io.txtGenetrate();//end view
+                    }
                 }
-                else if (command.equals("txt".toLowerCase())){
-                    io.txtGenetrate();//end view
-                }
-            } // end big else
-        }
+            }
 
-        io.txtGenetrate();
-        io.close();
-        System.out.println("Connection is closed. Thank you for using our service");
 
+        }// end big else
 
 
 
     }
+
+
+
 
     private void close(){
         webScraping.close();
@@ -184,9 +194,35 @@ public class Main {
 
     }
 
-    public void printOptions(){
-        System.out.println("Do you want to do something with this ? \n\n" +
-                "                Available commands are..\n" +
+    public String[] askAndReturnStringArray(){
+
+
+        String[] ans = sc.nextLine().split(" ");
+        return ans;
+
+
+
+
+
+    }
+
+    public String[] askAndReturnStringArray(){
+
+
+        String[] ans = sc.nextLine().split(" ");
+        return ans;
+
+
+
+
+
+    }
+
+    public void printOption(){
+        System.out.println(
+                "Do you want to do something with this ? \n\n" +
+                "  Available commands are..\n" +
+                        makeLine(20).toString()+
                 "• See    ( to see the course details ) e.g See 343 432 343 \n" +
                 "• Add   ( to add course(s) you're interested in ) e.g  Add 343 234 123 \n" +
                 "• View  ( to view your choosen courses) \n" +
@@ -195,33 +231,38 @@ public class Main {
                 "• Press Enter  ( go back to search section ) \n");
 
     }
-    public String beginQuestion(){
+    public void beginQuestion(){
 
         System.out.println("Type in anything to search for opened courses next term \n" +
                 "Press enter to see more options \n" +
                 "Type 'X' to exit. \n\n" );
-        String searchTypeIn = sc.nextLine();
 
-        if (searchTypeIn.toLowerCase().equals("X".toLowerCase())){
-            return "x";
-        }
-        else if (searchTypeIn.isEmpty()){
-            return " ";
-        }
-
-        printSeachResult(searchTypeIn);
-
-
-        return "ok";
 
     }
 
     private void printSeachResult(String wordToSearch){
         System.out.println("____________________________________SEARCH RESULT OF  \"" + wordToSearch + "\"  ___________________________________________-");
         webScraping.searchSubject(wordToSearch);
-        System.out.printf("\n\n--------------------------------------------------------------------------------------------------------\n");
+        System.out.println(makeLine(30).toString());
 
 
+    }
+
+    private void sayGoodbye(){
+        txtGenetrate();
+        close();
+        System.out.println("Connection is closed. Thank you for using our service");
+    }
+
+
+    private StringBuilder makeLine(int howLong){
+        StringBuilder st = new StringBuilder();
+        for (int i = 0; i < howLong ; i++) {
+            st.append("_");
+
+        }
+        st.append("\n");
+        return st;
     }
 
     public void seeData(List<String> from) {
@@ -229,7 +270,7 @@ public class Main {
         System.out.println("____________________HERE ARE THE LIST OF TIME AND TEACHERS ____________________________________");
 
         webScraping.theRest(from);
-        System.out.println("________________________________________________________________________________________________________\n");
+        System.out.println(makeLine(30).toString());
     }
 
 

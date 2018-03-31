@@ -82,7 +82,7 @@ public class ScrapingWeb {
         for (String ele : toDelete){
             if (chosen.size() < Integer.parseInt(ele)){
 
-                System.out.println("You only have  " + toDelete.size() + " subjects\n");
+                System.out.println("You only have  " +chosen.size() + " subjects to delete \n");
 
             }
             else {
